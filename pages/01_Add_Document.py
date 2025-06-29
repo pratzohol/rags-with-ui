@@ -1,12 +1,9 @@
 import streamlit as st
-import os, json, re, io
-from os import path
 import traceback
 from utilities.llm_helper import LLMHelper
 from utilities.embedding_hf_infer import get_embeddings
 from utilities.chunking import chunk_pdf_and_upload
 from utilities.milvus import MilvusHelper
-import uuid
 from urllib import parse
 from pymilvus import DataType, FieldSchema
 
@@ -30,7 +27,6 @@ try:
 
     llm_helper = LLMHelper()
 
-    bucket_name = os.getenv('BUCKET_NAME')
     existing_indices=llm_helper.blob_client.get_all_files(bucket_name)
     existing_indices.append("CREATE NEW INDEX")
 

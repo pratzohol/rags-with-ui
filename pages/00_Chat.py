@@ -2,7 +2,6 @@ import streamlit as st
 from streamlit_chat import message
 from utilities.llm_helper import LLMHelper
 import regex as re
-import os
 from random import randint
 import traceback
 

@@ -5,7 +5,7 @@ class MilvusHelper:
     def __init__(self, fields):
         try:
             self.client = MilvusClient("rag.db")
-            self.collection_name = "Milvus_uploading"
+            self.collection_name = "vector_emb"
             self.collection = self.create_collection(fields)
 
             print("Connected to Milvus.")
@@ -20,7 +20,7 @@ class MilvusHelper:
             enable_dynamic_field=True,
         )
         schema._fields = fields
-        index_args = {"field_name": "embeddings",
+        index_args = {"field_name": "vector",
                       "index_type": "HNSW",
                       "metric_type": "L2",
                       "params": {"nlist": 2}
@@ -37,23 +37,14 @@ class MilvusHelper:
             collection_name=self.collection_name,
             data=data
         )
-        # res = collection.insert(data)
-        # collection.flush()
+
         print("Setup and data insertion into Milvus completed.")
         return res
 
 if __name__ == '__main__':
-    urls = ["https://1.com", "https://2.com", "https://3.com", "https://4.com", "https://5.com", "https://6.com", "https://7.com", "https://8.com", "https://9.com", "https://10.com"]
-    import torch
-    embeddings = torch.randn((len(urls), 384))
-
     fields = [
         FieldSchema(name="id", dtype=DataType.INT64, is_primary=True),
-        FieldSchema(name="urls", dtype=DataType.VARCHAR, max_length=500),
-        FieldSchema(name="embeddings", dtype=DataType.FLOAT_VECTOR, dim=384)
+        FieldSchema(name="text", dtype=DataType.VARCHAR, max_length=500),
+        FieldSchema(name="vector", dtype=DataType.FLOAT_VECTOR, dim=384)
     ]
     milvus_client = MilvusHelper(fields)
-    data = [{"id": i, "urls": urls[i], "embeddings": embeddings[i]} for i in range(len(urls))]
-
-    uploaded = milvus_client.upload_data(data)
-    breakpoint()

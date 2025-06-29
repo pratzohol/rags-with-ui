@@ -8,21 +8,19 @@ from langchain.chains.chat_vector_db.prompts import CONDENSE_QUESTION_PROMPT
 from langchain.prompts import PromptTemplate
 from utilities.customprompt import PROMPT
 from utilities.embedding_hf_infer import EmbeddingModel
+from utilities.llm_hf_infer import MistralLLM
 from langchain_milvus.vectorstores import Milvus
 
 
 class LLMHelper:
     def __init__(self,
-        embeddings = None,
-        llm = None,
-        custom_prompt: str = "",
-        k: int = None
+        embeddings = EmbeddingModel("thenlper/gte-small"),
+        llm = MistralLLM,
+        k: int = 5
     ):
-        self.index_name: str = "embeddings"
-        self.prompt = PROMPT if custom_prompt == '' else PromptTemplate(template=custom_prompt, input_variables=["summaries", "question"])
-
-        self.embeddings = EmbeddingModel("thenlper/gte-small") if embeddings is None else embeddings
+        self.embeddings = embeddings
         self.llm = llm
+        self.k = k
 
         # Initialize Milvus as vector store
         connection_args = {
@@ -34,8 +32,6 @@ class LLMHelper:
             "params": {"nlist": 2}
         }
         self.vector_store = Milvus(embedding_function=self.embeddings, collection_name="vector_emb", index_params=index_params, consistency_level="Strong", primary_field="id", connection_args=connection_args)
-
-        self.k : int = 3 if k is None else k
 
     def get_all_documents(self, k: int = None):
         result = self.vector_store.similarity_search(query="*", k = k if k else self.k)
@@ -51,7 +47,7 @@ class LLMHelper:
 
     def get_semantic_answer_lang_chain(self, question, chat_history):
         question_generator = LLMChain(llm=self.llm, prompt=CONDENSE_QUESTION_PROMPT, verbose=False)
-        doc_chain = load_qa_with_sources_chain(self.llm, chain_type="stuff", verbose=False, prompt=self.prompt)
+        doc_chain = load_qa_with_sources_chain(self.llm, chain_type="stuff", verbose=False, prompt=PROMPT)
         chain = ConversationalRetrievalChain(
             retriever=self.vector_store.as_retriever(),
             question_generator=question_generator,
@@ -60,7 +56,6 @@ class LLMHelper:
         )
         result = chain({"question": question, "chat_history": chat_history})
         sources = "\n".join(set(map(lambda x: x.metadata["source"], result['source_documents'])))
-
 
         # return question, result['answer'], contextDict, sources
         return question, result['answer'], sources
