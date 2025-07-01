@@ -53,10 +53,12 @@ class LLMHelper:
             return_source_documents=True,
         )
         result = chain({"question": question, "chat_history": chat_history})
+
+        breakpoint()
         sources = "\n".join(
             set(map(lambda x: x.metadata["fileName"], result["source_documents"]))
         )
-        return question, result["answer"], sources
+        return question, result["answer"].split("Answer: ")[1], sources
 
     def get_completion(self, prompt, **kwargs):
         return self.llm(prompt)

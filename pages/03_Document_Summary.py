@@ -8,7 +8,7 @@ from utilities.llm_helper import LLMHelper
 
 def summarize():
     response = llm_helper.get_completion(get_prompt())
-    st.session_state["summary"] = response
+    st.session_state["summary"] = response.split(get_prompt())[1].lstrip("\n")
 
 
 def clear_summary():

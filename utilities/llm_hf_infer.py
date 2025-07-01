@@ -20,7 +20,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
     quantization_config=bnb_config,
-    device_map="auto",  # Automatically assign layers to your GPU/CPU
+    device_map="cuda",  # Automatically assign layers to your GPU/CPU
     torch_dtype=torch.bfloat16,
 )
 

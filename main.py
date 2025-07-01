@@ -81,96 +81,96 @@ def main():
 
         st.markdown("## ✅ Model has loaded and is ready for use. Happy learning!")
 
-        # Custom prompt variables
-        custom_prompt_placeholder = """{summaries}
-        Please reply to the question using only the text above.
-        Question: {question}
-        Answer:"""
-        custom_prompt_help = """You can configure a custom prompt by adding the variables {summaries} and {question} to the prompt.
-            {summaries} will be replaced with the content of the documents retrieved from the VectorStore.
-            {question} will be replaced with the user's question.
-        """
+        # # Custom prompt variables
+        # custom_prompt_placeholder = """{summaries}
+        # Please reply to the question using only the text above.
+        # Question: {question}
+        # Answer:"""
+        # custom_prompt_help = """You can configure a custom prompt by adding the variables {summaries} and {question} to the prompt.
+        #     {summaries} will be replaced with the content of the documents retrieved from the VectorStore.
+        #     {question} will be replaced with the user's question.
+        # """
 
-        # Answer the question if any
-        if st.session_state.askedquestion != "":
-            st.session_state["question"] = st.session_state.askedquestion
-            st.session_state.askedquestion = ""
-            (
-                st.session_state["question"],
-                st.session_state["response"],
-                st.session_state["context"],
-                st.session_state["sources"],
-            ) = llm_helper.get_semantic_answer_lang_chain(
-                st.session_state["question"], []
-            )
-            st.session_state["response"], followup_questions_list = (
-                llm_helper.extract_followupquestions(st.session_state["response"])
-            )
-            st.session_state["followup_questions"] = followup_questions_list
+        # # Answer the question if any
+        # if st.session_state.askedquestion != "":
+        #     st.session_state["question"] = st.session_state.askedquestion
+        #     st.session_state.askedquestion = ""
+        #     (
+        #         st.session_state["question"],
+        #         st.session_state["response"],
+        #         st.session_state["context"],
+        #         st.session_state["sources"],
+        #     ) = llm_helper.get_semantic_answer_lang_chain(
+        #         st.session_state["question"], []
+        #     )
+        #     st.session_state["response"], followup_questions_list = (
+        #         llm_helper.extract_followupquestions(st.session_state["response"])
+        #     )
+        #     st.session_state["followup_questions"] = followup_questions_list
 
-        sourceList = []
+        # sourceList = []
 
-        # Display the sources and context - even if the page is reloaded
-        if st.session_state["sources"] or st.session_state["context"]:
-            (
-                st.session_state["response"],
-                sourceList,
-                matchedSourcesList,
-                linkList,
-                filenameList,
-            ) = llm_helper.get_links_filenames(
-                st.session_state["response"], st.session_state["sources"]
-            )
-            st.write("<br>", unsafe_allow_html=True)
-            st.markdown("Answer: " + st.session_state["response"])
+        # # Display the sources and context - even if the page is reloaded
+        # if st.session_state["sources"] or st.session_state["context"]:
+        #     (
+        #         st.session_state["response"],
+        #         sourceList,
+        #         matchedSourcesList,
+        #         linkList,
+        #         filenameList,
+        #     ) = llm_helper.get_links_filenames(
+        #         st.session_state["response"], st.session_state["sources"]
+        #     )
+        #     st.write("<br>", unsafe_allow_html=True)
+        #     st.markdown("Answer: " + st.session_state["response"])
 
-        # Display proposed follow-up questions which can be clicked on to ask that question automatically
-        if len(st.session_state["followup_questions"]) > 0:
-            st.write("<br>", unsafe_allow_html=True)
-            st.markdown("**Proposed follow-up questions:**")
-        with st.container():
-            for questionId, followup_question in enumerate(
-                st.session_state["followup_questions"]
-            ):
-                if followup_question:
-                    str_followup_question = re.sub(
-                        r"(^|[^\\\\])'", r"\1\\'", followup_question
-                    )
-                    st.button(
-                        str_followup_question,
-                        key=1000 + questionId,
-                        on_click=ask_followup_question,
-                        args=(followup_question,),
-                    )
+        # # Display proposed follow-up questions which can be clicked on to ask that question automatically
+        # if len(st.session_state["followup_questions"]) > 0:
+        #     st.write("<br>", unsafe_allow_html=True)
+        #     st.markdown("**Proposed follow-up questions:**")
+        # with st.container():
+        #     for questionId, followup_question in enumerate(
+        #         st.session_state["followup_questions"]
+        #     ):
+        #         if followup_question:
+        #             str_followup_question = re.sub(
+        #                 r"(^|[^\\\\])'", r"\1\\'", followup_question
+        #             )
+        #             st.button(
+        #                 str_followup_question,
+        #                 key=1000 + questionId,
+        #                 on_click=ask_followup_question,
+        #                 args=(followup_question,),
+        #             )
 
-        if st.session_state["sources"] or st.session_state["context"]:
-            # Buttons to display the context used to answer
-            st.write("<br>", unsafe_allow_html=True)
-            st.markdown("**Document sources:**")
-            for id in range(len(sourceList)):
-                st.markdown(f"[{id+1}] {sourceList[id]}")
+        # if st.session_state["sources"] or st.session_state["context"]:
+        #     # Buttons to display the context used to answer
+        #     st.write("<br>", unsafe_allow_html=True)
+        #     st.markdown("**Document sources:**")
+        #     for id in range(len(sourceList)):
+        #         st.markdown(f"[{id+1}] {sourceList[id]}")
 
-            # Details on the question and answer context
-            st.write("<br><br>", unsafe_allow_html=True)
-            with st.expander("Question and Answer Context"):
-                if (
-                    not st.session_state["context"] is None
-                    and st.session_state["context"] != []
-                ):
-                    for content_source in st.session_state["context"].keys():
-                        st.markdown(f"#### {content_source}")
-                        for context_text in st.session_state["context"][content_source]:
-                            st.markdown(f"{context_text}")
+        #     # Details on the question and answer context
+        #     st.write("<br><br>", unsafe_allow_html=True)
+        #     with st.expander("Question and Answer Context"):
+        #         if (
+        #             not st.session_state["context"] is None
+        #             and st.session_state["context"] != []
+        #         ):
+        #             for content_source in st.session_state["context"].keys():
+        #                 st.markdown(f"#### {content_source}")
+        #                 for context_text in st.session_state["context"][content_source]:
+        #                     st.markdown(f"{context_text}")
 
-                st.markdown(f"SOURCES: {st.session_state['sources']}")
+        #         st.markdown(f"SOURCES: {st.session_state['sources']}")
 
-        for questionId, followup_question in enumerate(
-            st.session_state["followup_questions"]
-        ):
-            if followup_question:
-                str_followup_question = re.sub(
-                    r"(^|[^\\\\])'", r"\1\\'", followup_question
-                )
+        # for questionId, followup_question in enumerate(
+        #     st.session_state["followup_questions"]
+        # ):
+        #     if followup_question:
+        #         str_followup_question = re.sub(
+        #             r"(^|[^\\\\])'", r"\1\\'", followup_question
+        #         )
 
     except Exception:
         st.error(traceback.format_exc())
