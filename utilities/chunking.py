@@ -1,5 +1,7 @@
-from PyPDF2 import PdfReader
 import io
+
+from PyPDF2 import PdfReader
+
 
 def chunk_pdf_and_upload(bytes_data):
     pdf_stream = io.BytesIO(bytes_data)

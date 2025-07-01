@@ -1,29 +1,35 @@
-import streamlit as st
 import os
 import traceback
+
+import streamlit as st
+
 from utilities.llm_helper import LLMHelper
 
+
 def clear_summary():
-    st.session_state['summary'] = ""
+    st.session_state["summary"] = ""
+
 
 def get_custom_prompt():
-    customtext = st.session_state['customtext']
+    customtext = st.session_state["customtext"]
     customprompt = "{}".format(customtext)
     return customprompt
 
+
 def customcompletion():
     response = llm_helper.get_completion(get_custom_prompt())
-    st.session_state['conv_result'] = response.encode().decode()
+    st.session_state["conv_result"] = response.encode().decode()
+
 
 try:
     # Set page layout to wide screen and menu item
     menu_items = {
-    'Get help': None,
-    'Report a bug': None,
-    'About': '''
+        "Get help": None,
+        "Report a bug": None,
+        "About": """
      ## Embeddings App
      Embedding testing application.
-    '''
+    """,
     }
     st.set_page_config(layout="wide", menu_items=menu_items)
 
@@ -65,12 +71,14 @@ try:
         Format the ouput as JSON object called "results". Pretty print the JSON and make sure that is properly closed at the end."""
 
     # displaying a box for a custom prompt
-    st.session_state['customtext'] = st.text_area(label="Prompt",value=conversation_prompt, height=400)
+    st.session_state["customtext"] = st.text_area(
+        label="Prompt", value=conversation_prompt, height=400
+    )
     st.button(label="Execute tasks", on_click=customcompletion)
     # displaying the summary
     result = ""
-    if 'conv_result' in st.session_state:
-        result = st.session_state['conv_result']
+    if "conv_result" in st.session_state:
+        result = st.session_state["conv_result"]
     st.text_area(label="Llama3-8B result", value=result, height=200)
 
 except Exception as e:

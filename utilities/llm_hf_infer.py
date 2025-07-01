@@ -1,7 +1,11 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
-from transformers import pipeline
 from langchain.llms import HuggingFacePipeline
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig,
+    pipeline,
+)
 
 model_id = "mistralai/Mistral-7B-Instruct-v0.1"
 
