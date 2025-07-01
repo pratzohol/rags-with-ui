@@ -79,7 +79,7 @@ try:
     result = ""
     if "conv_result" in st.session_state:
         result = st.session_state["conv_result"]
-    st.text_area(label="Llama3-8B result", value=result, height=200)
+    st.text_area(label="Mistral-7B result", value=result, height=200)
 
 except Exception as e:
     st.error(traceback.format_exc())

@@ -75,9 +75,5 @@ try:
     st.text_area(label="Summary result", value=summary, height=200)
     st.button(label="Clear summary", on_click=clear_summary)
 
-    # displaying the prompt that was used to generate the summary
-    st.text_area(label="Prompt", value=get_prompt(), height=400)
-    st.button(label="Summarize with updated prompt")
-
 except Exception as e:
     st.error(traceback.format_exc())

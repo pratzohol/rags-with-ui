@@ -76,10 +76,10 @@ def main():
         }
         st.set_page_config(layout="wide", menu_items=menu_items)
 
-        llm_helper = LLMHelper(
-            custom_prompt=st.session_state.custom_prompt,
-            temperature=st.session_state.custom_temperature,
-        )
+        with st.spinner("Loading model, please wait..."):
+            llm_helper = LLMHelper()
+
+        st.markdown("## ✅ Model has loaded and is ready for use. Happy learning!")
 
         # Custom prompt variables
         custom_prompt_placeholder = """{summaries}
@@ -90,34 +90,6 @@ def main():
             {summaries} will be replaced with the content of the documents retrieved from the VectorStore.
             {question} will be replaced with the user's question.
         """
-
-        col1, col2, col3 = st.columns([1, 2, 1])
-        _, col2, col3 = st.columns([2, 2, 2])
-
-        with col3:
-            with st.expander("Settings"):
-                st.slider(
-                    "Temperature",
-                    min_value=0.0,
-                    max_value=1.0,
-                    step=0.1,
-                    key="custom_temperature",
-                )
-                st.text_area(
-                    "Custom Prompt",
-                    key="custom_prompt",
-                    on_change=check_variables_in_prompt,
-                    placeholder=custom_prompt_placeholder,
-                    help=custom_prompt_help,
-                    height=150,
-                )
-
-        question = st.text_input(
-            "Mistral-7B Semantic Answer",
-            value=st.session_state["askedquestion"],
-            key="input" + str(st.session_state["input_message_key"]),
-            on_change=questionAsked,
-        )
 
         # Answer the question if any
         if st.session_state.askedquestion != "":
