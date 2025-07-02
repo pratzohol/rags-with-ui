@@ -54,7 +54,6 @@ class LLMHelper:
         )
         result = chain({"question": question, "chat_history": chat_history})
 
-        breakpoint()
         sources = "\n".join(
             set(map(lambda x: x.metadata["fileName"], result["source_documents"]))
         )
